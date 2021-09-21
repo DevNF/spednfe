@@ -1,0 +1,21 @@
+{
+    "name": "nfhub/spednfe",
+    "description": "Biblioteca para comunicaçao com a API de SpedNFe do NFHub",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jefferson Moreira",
+            "email": "jeematheus@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "NFHub\\SpedNfe\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+    	"nfhub/common": "dev-stable"
+    }
+}
