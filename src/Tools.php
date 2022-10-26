@@ -475,4 +475,127 @@ class Tools extends ToolsBase
             throw new Exception($e, 1);
         }
     }
+
+    /**
+     * Cadastra/Atualiza série fiscal da empresa
+     *
+     * @param string $company_cnpj CNPJ da empresa
+     * @param int $company_id ID da empresa no NFHub
+     * @param array $dados Dados da série fiscal a ser cadastrada/atualizada
+     * @param array $params Parametros adicionais aceitos pela requisição
+     */
+    function cadastraSerieFiscal(string $company_cnpj, int $company_id, array $data, array $params = []): array
+    {
+        try {
+            $headers = [
+                "company-cnpj: $company_cnpj"
+            ];
+
+            $response = $this->post("/companies/$company_id/series", $data, $params, $headers);
+
+            if ($response['httpCode'] >= 200 || $response['httpCode'] <= 299) {
+                return $response;
+            }
+
+            if (isset($response['body']->message)) {
+                throw new Exception($response['body']->message, 1);
+            }
+
+            if (isset($response['body']->errors)) {
+                throw new Exception(implode("\r\n", $response['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($response), 1);
+        } catch (Exception $e) {
+            throw new Exception($e, 1);
+        }
+    }
+
+    /**
+     * Consulta as séries fiscais da empresa
+     *
+     * @param string $company_cnpj CNPJ da empresa
+     * @param int $company_id ID da empresa no NFHub
+     * @param int $serie Série Fiscal
+     * @param array $params Parametros adicionais aceitos pela requisição
+     */
+    function consultaSerieFiscal(string $company_cnpj, int $company_id, int $type, int $serie, array $params = []): array
+    {
+        try {
+            $headers = [
+                "company-cnpj: $company_cnpj"
+            ];
+
+            $params = array_filter($params, function($item) {
+                return !in_array($item['type'], ['serie']);
+            }, ARRAY_FILTER_USE_BOTH);
+
+            if (!empty($type)) {
+                $params[] = [
+                    'name' => 'type',
+                    'value' => $type
+                ];
+            }
+
+            if (!empty($serie)) {
+                $params[] = [
+                    'name' => 'serie',
+                    'value' => $serie
+                ];
+            }
+
+            $response = $this->get("/companies/$company_id/series", $params, $headers);
+
+            if ($response['httpCode'] >= 200 || $response['httpCode'] <= 299) {
+                return $response;
+            }
+
+            if (isset($response['body']->message)) {
+                throw new Exception($response['body']->message, 1);
+            }
+
+            if (isset($response['body']->errors)) {
+                throw new Exception(implode("\r\n", $response['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($response), 1);
+        } catch (Exception $e) {
+            throw new Exception($e, 1);
+        }
+    }
+
+    /**
+     * Exclui a série fiscal da empresa
+     *
+     * @param string $company_cnpj CNPJ da empresa
+     * @param int $company_id ID da empresa no NFHub
+     * @param int $serie_id ID da serie no NFHub
+     * @param array $params Parametros adicionais aceitos pela requisição
+     */
+    function removeSerieFiscal(string $company_cnpj, int $company_id, int $serie_id, array $params = []): array
+    {
+        try {
+            $headers = [
+                "company-cnpj: $company_cnpj"
+            ];
+
+            $response = $this->delete("/companies/$company_id/series/$serie_id", $params, $headers);
+
+            if ($response['httpCode'] >= 200 || $response['httpCode'] <= 299) {
+                return $response;
+            }
+
+            if (isset($response['body']->message)) {
+                throw new Exception($response['body']->message, 1);
+            }
+
+            if (isset($response['body']->errors)) {
+                throw new Exception(implode("\r\n", $response['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($response), 1);
+        } catch (Exception $e) {
+            throw new Exception($e, 1);
+        }
+    }
 }
